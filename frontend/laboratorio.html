@@ -1,0 +1,613 @@
+<!DOCTYPE html><html class="dark" lang="pt-br" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SQL Mastery HUD - Laboratório Prático</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hud-glow {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            background: rgba(18, 32, 50, 0.7); 
+            border: 1px solid rgba(140, 144, 159, 0.2);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #010f20; }
+        ::-webkit-scrollbar-thumb { background: #283648; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #adc6ff; }
+
+        /* Customizações do Editor estilo Console */
+        .editor-console {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 17px !important;
+            line-height: 1.6 !important;
+            tab-size: 4;
+            outline: none;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            color: #4edea3; 
+        }
+        pre[class*="language-"], code[class*="language-"] {
+            background: transparent !important;
+            font-family: 'JetBrains Mono', monospace !important;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#283648",
+                        "tertiary-container": "#ff516a",
+                        "on-error": "#690005",
+                        "on-primary-container": "#00285d",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "inverse-on-surface": "#233144",
+                        "inverse-primary": "#005ac2",
+                        "tertiary": "#ffb2b7",
+                        "on-tertiary-fixed-variant": "#92002a",
+                        "surface-tint": "#adc6ff",
+                        "tertiary-fixed-dim": "#ffb2b7",
+                        "outline-variant": "#424754",
+                        "surface": "#051425",
+                        "surface-container-lowest": "#010f20",
+                        "surface-dim": "#051425",
+                        "background": "#051425",
+                        "on-surface": "#d5e3fc",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#6ffbbe",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#283648",
+                        "surface-container-low": "#0d1c2e",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#c2c6d6",
+                        "secondary-container": "#00a572",
+                        "on-secondary": "#003824",
+                        "on-tertiary-container": "#5b0017",
+                        "primary-container": "#4d8eff",
+                        "surface-container": "#122032",
+                        "on-tertiary-fixed": "#40000d",
+                        "tertiary-fixed": "#ffdadb",
+                        "secondary": "#4edea3",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-secondary-container": "#00311f",
+                        "surface-container-high": "#1d2b3d",
+                        "inverse-surface": "#d5e3fc",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-tertiary": "#67001b",
+                        "on-background": "#d5e3fc",
+                        "on-primary-fixed": "#001a42",
+                        "on-primary": "#002e6a",
+                        "surface-bright": "#2c3a4d",
+                        "primary": "#adc6ff",
+                        "outline": "#8c909f",
+                        "on-secondary-fixed": "#002113"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "gutter": "20px",
+                        "container-max": "1200px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "full": "9999px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "code-md": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen flex flex-col overflow-hidden selection:bg-primary/30 selection:text-primary">
+<header class="w-full h-[60px] flex justify-between items-center px-6 bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant/30 flex-shrink-0 z-50">
+<div class="flex items-center gap-4">
+<span class="text-[18px] font-bold text-primary tracking-tight">SQL Mastery HUD</span>
+<div class="h-4 w-px bg-outline-variant/30 mx-2"></div>
+<nav class="flex gap-4">
+<span class="text-primary-fixed-dim text-sm font-semibold font-mono uppercase tracking-wider">Laboratório Prático</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full border border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="text-[12px] font-mono text-on-surface" id="hud-xp">1,240 XP</span>
+</div>
+</div>
+</header>
+
+<main class="flex-1 p-4 flex flex-col gap-4 min-h-0 overflow-hidden max-w-[1600px] w-full mx-auto">
+<div class="flex justify-between items-end flex-shrink-0">
+<h1 class="text-[22px] text-on-surface font-bold tracking-tight" id="lab-titulo">Laboratório Prático</h1>
+</div>
+
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden">
+<div class="lg:col-span-4 flex flex-col min-h-0 h-full">
+<section class="glass-panel rounded-xl flex-1 flex flex-col overflow-hidden border border-primary/20 bg-surface-container-low">
+<div class="p-3 border-b border-outline-variant/30 bg-surface-container-high flex items-center gap-2 flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+<h2 class="text-[12px] font-bold text-primary uppercase tracking-wider">Professor Virtual</h2>
+</div>
+
+<div id="chat-message-area" class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+</div>
+
+<div class="p-3 border-t border-outline-variant/30 bg-surface-container-lowest flex-shrink-0">
+    <div class="relative flex items-center">
+        <input id="chat-input" spellcheck="false" class="w-full bg-white text-black px-3 py-2 rounded-lg border border-outline-variant/30 text-[13px] focus:outline-none focus:border-primary/50 pr-10 font-sans" placeholder="Digite sua dúvida teórica ou peça ajuda..." type="text">
+        <button id="chat-send-btn" class="absolute right-3 text-primary hover:text-primary-container flex items-center">
+            <span class="material-symbols-outlined text-[20px]">send</span>
+        </button>
+    </div>
+</div>
+</section>
+</div>
+
+<div class="lg:col-span-8 flex flex-col gap-4 min-h-0 h-full">
+<section class="glass-panel rounded-xl flex-1 flex flex-col overflow-hidden border border-outline-variant/20 bg-surface-container-low">
+<div class="flex items-center justify-between bg-surface-container-high px-md py-sm border-b border-outline-variant/30">
+<div class="flex items-center gap-md">
+<div class="flex gap-xs">
+<div class="w-3 h-3 rounded-full bg-on-error/50"></div>
+<div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-secondary/50"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant font-mono text-[12px]">console_query.sql</span>
+</div>
+<button class="text-primary hover:text-white transition-colors" title="Limpar editor" id="btn-limpar">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete_sweep">delete_sweep</span>
+</button>
+</div>
+
+<div class="flex-1 font-code-md text-code-md bg-[#020617] relative flex min-h-0 overflow-hidden">
+<div class="text-outline-variant text-right select-none p-md border-r border-outline-variant/10 bg-[#010914] text-xs font-mono space-y-1 pt-4 whitespace-pre text-gray-500">1
+2
+3
+4
+5</div>
+<div class="flex-1 p-4 overflow-auto relative">
+<pre class="language-sql !m-0 !p-0 h-full w-full"><code id="txt-sql-usuario" class="editor-console language-sql" contenteditable="true" spellcheck="false" placeholder="Escreva sua consulta SQL aqui..."></code></pre>
+</div>
+</div>
+</section>
+
+<section class="glass-panel rounded-xl border border-outline-variant/20 overflow-hidden flex flex-col h-[220px] bg-surface-container-low">
+<div class="p-sm border-b border-outline-variant/20 bg-surface-container-high flex items-center justify-between shrink-0">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="table_chart">table_chart</span>
+<h3 class="text-sm font-bold font-mono text-on-surface">Visualização de Dados (Preview)</h3>
+</div>
+<span class="text-[10px] font-label-caps text-secondary px-sm py-0.5 rounded bg-secondary/10 border border-secondary/20 font-mono">historico_copas</span>
+</div>
+<div class="flex-1 overflow-auto text-xs font-mono bg-[#020617]">
+<table class="w-full text-left border-collapse min-w-[1000px]" id="tabela-dados-referencia">
+<thead class="bg-[#010914] text-primary sticky top-0 border-b border-outline-variant/20 z-10">
+<tr id="cabecalho-tabela">
+<th class="p-2 text-center text-outline-variant">Carregando colunas...</th>
+</tr>
+</thead>
+<tbody class="text-on-surface-variant divide-y divide-outline-variant/10" id="corpo-tabela">
+<tr>
+<td class="p-4 text-center text-outline-variant">Carregando dados do banco...</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+</main>
+
+<footer class="w-full h-[70px] bg-surface-dim/95 backdrop-blur-md border-t border-outline-variant/20 px-6 flex items-center flex-shrink-0 z-50">
+<div class="max-w-[1600px] w-full mx-auto flex items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+<span class="text-[11px] text-on-surface-variant font-mono" id="label-progresso">Carregando progresso...</span>
+<div class="flex gap-1.5" id="container-passos">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-on-surface text-[13px] font-semibold transition-colors" id="btn-pular">Pular</button>
+<button class="px-5 py-2.5 bg-primary hover:bg-primary-container text-surface-container-lowest font-bold text-[14px] rounded-xl flex items-center gap-2 transition-all active:scale-95 shadow-md" id="btn-enviar">
+<span id="texto-btn-enviar">Enviar Resposta</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</div>
+</footer>
+
+<script>
+    const editor = document.getElementById('txt-sql-usuario');
+    
+    editor.addEventListener('input', () => {
+        highlightConsole();
+    });
+
+    editor.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const sel = window.getSelection();
+            const range = sel.getRangeAt(0);
+            const tabNode = document.createTextNode('    ');
+            range.insertNode(tabNode);
+            range.setStartAfter(tabNode);
+            range.setEndAfter(tabNode);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    });
+
+    function highlightConsole() {
+        const cursorPosition = getCaretPosition(editor);
+        let texto = editor.innerText;
+        
+        editor.innerHTML = Prism.highlight(texto, Prism.languages.sql, 'sql');
+        setCaretPosition(editor, cursorPosition);
+    }
+
+    function getCaretPosition(element) {
+        let position = 0;
+        const isSupported = typeof window.getSelection !== "undefined";
+        if (isSupported) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const preCaretRange = range.cloneRange();
+                preCaretRange.selectNodeContents(element);
+                preCaretRange.setEnd(range.startContainer, range.startOffset);
+                position = preCaretRange.toString().length;
+            }
+        }
+        return position;
+    }
+
+    function setCaretPosition(element, pos) {
+        for (let node of element.childNodes) {
+            if (node.nodeType === 3) {
+                if (node.length >= pos) {
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.setStart(node, pos);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    return;
+                } else {
+                    pos -= node.length;
+                }
+            } else {
+                let childLength = node.innerText ? node.innerText.length : node.textContent.length;
+                if (childLength >= pos) {
+                    setCaretPosition(node, pos);
+                    return;
+                } else {
+                    pos -= childLength;
+                }
+            }
+        }
+    }
+</script>
+
+<script>
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    let listaQuestoes = [];
+    let indiceAtual = 0;
+    let chatHistory = [];
+    let nomeConceitoGlobal = "SELECT";
+    let conceitoIdGlobal = 1;
+
+    const chatMessageArea = document.getElementById("chat-message-area");
+    const chatInput = document.getElementById("chat-input");
+    const chatSendBtn = document.getElementById("chat-send-btn");
+    const txtSqlUsuario = document.getElementById("txt-sql-usuario");
+    const labelProgresso = document.getElementById("label-progresso");
+    const containerPassos = document.getElementById("container-passos");
+    const btnEnviar = document.getElementById("btn-enviar");
+    const textoBtnEnviar = document.getElementById("texto-btn-enviar");
+    const btnLimpar = document.getElementById("btn-limpar");
+    const btnPular = document.getElementById("btn-pular");
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        conceitoIdGlobal = parseInt(urlParams.get('conceito')) || 1;
+        
+        carregarLaboratorioDoBanco(conceitoIdGlobal);
+        carregarDadosReferencia();
+    });
+
+    btnLimpar.addEventListener("click", () => { 
+        txtSqlUsuario.innerText = ""; 
+        Prism.highlightElement(txtSqlUsuario);
+    });
+    btnPular.addEventListener("click", () => { registrarTentativaProficiencia(false); avancarLaboratorio(); });
+
+    async function carregarLaboratorioDoBanco(conceitoId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/laboratorio/questoes/${conceitoId}`);
+            if (!response.ok) throw new Error("Erro ao buscar laboratório no banco.");
+            
+            listaQuestoes = await response.json();
+            
+            if (listaQuestoes.length === 0) {
+                exibirMensagemChat("PROFESSOR", "Nenhum laboratório disponível para este módulo.");
+                return;
+            }
+
+            atualizarHUDProgresso();
+            renderizarQuestaoAtual();
+
+        } catch (error) {
+            console.error(error);
+            exibirMensagemChat("PROFESSOR", "Erro de conexão ao sincronizar com o banco SQLite do servidor.");
+        }
+    }
+
+    async function carregarDadosReferencia() {
+        const cabecalhoTabela = document.getElementById("cabecalho-tabela");
+        const corpoTabela = document.getElementById("corpo-tabela");
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/laboratorio/referencia/copas`);
+            if (!response.ok) throw new Error("Erro ao buscar dados de referência.");
+
+            const dados = await response.json();
+            if (dados.length === 0) {
+                corpoTabela.innerHTML = `<tr><td class="p-4 text-center text-outline-variant">Tabela vazia no banco de dados.</td></tr>`;
+                return;
+            }
+
+            const colunas = Object.keys(dados[0]);
+            cabecalhoTabela.innerHTML = colunas
+                .map(col => `<th class="p-2 border-b border-outline-variant/20 bg-[#010914] text-primary font-bold uppercase whitespace-nowrap">${col}</th>`)
+                .join("");
+
+            corpoTabela.innerHTML = dados
+                .map(linha => {
+                    const celulas = colunas.map(col => `<td class="p-2 whitespace-nowrap text-on-surface-variant/90">${linha[col] ?? ''}</td>`).join("");
+                    return `<tr class="hover:bg-surface-container/40 border-b border-outline-variant/5 transition-colors">${celulas}</tr>`;
+                })
+                .join("");
+
+        } catch (error) {
+            console.error(error);
+            corpoTabela.innerHTML = `<tr><td class="p-4 text-center text-red-400">Falha ao se conectar com o servidor para puxar a tabela.</td></tr>`;
+        }
+    }
+
+    function renderizarQuestaoAtual() {
+        const questao = listaQuestoes[indiceAtual];
+        
+        chatMessageArea.innerHTML = "";
+        chatHistory = []; 
+        exibirMensagemChat("PROFESSOR", `**Desafio Prático:** ${questao.enunciado}\n\nEscreva sua query ao lado no console e clique em **Enviar Resposta** para eu validar estruturalmente.`);
+        
+        txtSqlUsuario.innerText = "";
+        document.getElementById("lab-titulo").textContent = `Exercício ${indiceAtual + 1}: Prática Discursiva`;
+        destacarBolinhaAtiva();
+    }
+
+    function exibirMensagemChat(autor, texto) {
+        const div = document.createElement('div');
+        const belongsToUser = autor === "VOCÊ";
+        div.className = belongsToUser ? "flex flex-col gap-1 max-w-[85%] ml-auto items-end" : "flex flex-col gap-1 max-w-[85%]";
+        
+        const labelStyle = belongsToUser ? "text-secondary mr-1" : "text-primary ml-1";
+        const bubbleStyle = belongsToUser ? "bg-secondary/10 border-secondary/30 rounded-tr-none text-on-surface" : "bg-surface-container-highest border-outline-variant/20 rounded-tl-none text-on-surface";
+
+        let textoFormatado = texto;
+        textoFormatado = textoFormatado.replace(/```sql([\s\S]*?)```/g, function(match, code) {
+            return `<pre class="bg-surface-container-lowest/80 text-secondary font-mono text-[12px] p-2.5 rounded-md border border-outline-variant/40 my-2 overflow-x-auto w-full select-all"><code>${code.trim()}</code></pre>`;
+        });
+        textoFormatado = textoFormatado.replace(/`([^`]+)`/g, '<code class="bg-surface-container border border-outline-variant/30 px-1 py-0.5 rounded text-primary-fixed-dim font-mono text-[12px]">$1</code>');
+        textoFormatado = textoFormatado.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
+
+        div.innerHTML = `
+            <span class="text-[10px] font-mono ${labelStyle}">${autor}</span>
+            <div class="p-2.5 rounded-lg border text-[13px] leading-relaxed ${bubbleStyle}">${textoFormatado}</div>
+        `;
+        chatMessageArea.appendChild(div);
+        chatMessageArea.scrollTop = chatMessageArea.scrollHeight;
+    }
+
+    function exibirMensagemLoading() {
+        const id = "loading-" + Date.now();
+        const div = document.createElement('div');
+        div.id = id;
+        div.className = "flex flex-col gap-1 max-w-[85%]";
+        div.innerHTML = `
+            <span class="text-[10px] font-mono text-primary ml-1 animate-pulse">PROFESSOR</span>
+            <div class="bg-surface-container-highest/60 p-2.5 rounded-lg rounded-tl-none border border-outline-variant/10 text-[13px] text-on-surface/70 italic flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
+                Analisando sintaxe...
+            </div>
+        `;
+        chatMessageArea.appendChild(div);
+        chatMessageArea.scrollTop = chatMessageArea.scrollHeight;
+        return id;
+    }
+
+    async function enviarDuvidaChat() {
+        const payloadText = chatInput.value.trim();
+        if (!payloadText) return;
+
+        exibirMensagemChat("VOCÊ", payloadText);
+        chatInput.value = '';
+        chatHistory.push({ role: "user", content: payloadText });
+
+        const qCorrente = listaQuestoes[indiceAtual] || {};
+        const loadingId = exibirMensagemLoading();
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/tutor/chat/professor-virtual`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    dados_questao: {
+                        enunciado: qCorrente.enunciado || 'Nenhum enunciado ativo',
+                        resposta_correta: "Query de Gabarito Interna", 
+                        resposta_aluno: txtSqlUsuario.innerText || 'Nenhuma query digitada',
+                        conceito_nome: nomeConceitoGlobal
+                    },
+                    historico_mensagens: chatHistory
+                })
+            });
+            
+            document.getElementById(loadingId)?.remove();
+
+            const data = await response.json();
+            if (data.response) {
+                exibirMensagemChat("PROFESSOR", data.response);
+                chatHistory.push({ role: "assistant", content: data.response });
+            }
+        } catch (error) {
+            document.getElementById(loadingId)?.remove();
+            exibirMensagemChat("PROFESSOR", "Tive uma instabilidade ao processar a dúvida com a IA. Pode reenviar?");
+        }
+    }
+
+    // DISPARA A ATUALIZAÇÃO DA PROFICIÊNCIA DO ALUNO NO MODELO DE DIAGNÓSTICO DO BACKEND
+    async function registrarTentativaProficiencia(acertou) {
+        try {
+            await fetch(`${API_BASE_URL}/diagnostic/responder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conceito_id: conceitoIdGlobal,
+                    acertou: acertou
+                })
+            });
+        } catch (error) {
+            console.error("Erro ao registrar proficiência de diagnóstico:", error);
+        }
+    }
+
+    function atualizarHUDProgresso() {
+        labelProgresso.textContent = `Questão ${indiceAtual + 1} de ${listaQuestoes.length}`;
+        containerPassos.innerHTML = "";
+        listaQuestoes.forEach((_, i) => {
+            const dot = document.createElement("div");
+            dot.id = `hud-dot-${i}`;
+            dot.className = "w-2.5 h-2.5 rounded-full bg-surface-container-highest border border-outline-variant/30 transition-all duration-300";
+            containerPassos.appendChild(dot);
+        });
+    }
+
+    function destacarBolinhaAtiva() {
+        listaQuestoes.forEach((_, i) => {
+            const d = document.getElementById(`hud-dot-${i}`);
+            if (!d) return;
+            if (i === indiceAtual) {
+                d.className = "w-2.5 h-2.5 rounded-full bg-primary/30 border-2 border-primary scale-110 transition-all";
+            } else if (i < indiceAtual) {
+                d.className = "w-2.5 h-2.5 rounded-full bg-secondary border border-secondary shadow-[0_0_8px_rgba(78,222,163,0.4)]";
+            } else {
+                d.className = "w-2.5 h-2.5 rounded-full bg-surface-container-highest border border-outline-variant/30 transition-all";
+            }
+        });
+    }
+
+    btnEnviar.addEventListener("click", async () => {
+        const codigoUsuario = txtSqlUsuario.innerText.trim();
+        
+        if (!codigoUsuario) {
+            exibirMensagemChat("PROFESSOR", "Por favor, digite sua consulta SQL antes de tentar enviar o código para validação!");
+            return;
+        }
+
+        textoBtnEnviar.textContent = "Processando...";
+        btnEnviar.disabled = true;
+
+        try {
+            const questao = listaQuestoes[indiceAtual];
+            const response = await fetch(`${API_BASE_URL}/laboratorio/verificar`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    questao_id: questao.id,
+                    query_usuario: codigoUsuario
+                })
+            });
+
+            if (!response.ok) throw new Error("Erro na resposta do servidor.");
+            const dadosValidacao = await response.json();
+
+            if (dadosValidacao.correto) {
+                exibirMensagemChat("PROFESSOR", `**Acerto Confirmado!** 🎉\n\n${dadosValidacao.mensagem}`);
+                
+                // NOTIFICA O BACKEND DO ACERTO PARA ELEVAÇÃO DA PROFICIÊNCIA COGNITIVA
+                await registrarTentativaProficiencia(true);
+
+                setTimeout(() => {
+                    avancarLaboratorio();
+                }, 2200);
+            } else {
+                exibirMensagemChat("PROFESSOR", `❌ **Ajuste Necessário:**\n\n${dadosValidacao.mensagem}\n\nCaso tenha dúvidas sobre como ajustar o seu código, use o campo de texto abaixo para conversar comigo!`);
+                
+                // NOTIFICA O BACKEND DO ERRO PARA AJUSTAR O NÍVEL DE APRENDIZADO
+                await registrarTentativaProficiencia(false);
+            }
+
+        } catch (error) {
+            console.error(error);
+            exibirMensagemChat("PROFESSOR", "Falha crítica ao conectar com o validador remoto do banco de dados.");
+        } finally {
+            textoBtnEnviar.textContent = "Enviar Resposta";
+            btnEnviar.disabled = false;
+        }
+    });
+
+    function avancarLaboratorio() {
+        if (indiceAtual < listaQuestoes.length - 1) {
+            indiceAtual++;
+            labelProgresso.textContent = `Questão ${indiceAtual + 1} de ${listaQuestoes.length}`;
+            renderizarQuestaoAtual();
+        } else {
+            exibirMensagemChat("PROFESSOR", "🏆 **Laboratório Concluído!** Maravilhoso, você atingiu os objetivos práticos propostos. Redirecionando para o menu principal...");
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 2500);
+        }
+    }
+
+    chatSendBtn.addEventListener('click', enviarDuvidaChat);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') enviarDuvidaChat(); });
+</script>
+</body></html>

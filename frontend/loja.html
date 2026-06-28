@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SQL Mastery HUD | Coleção Pixel Art</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#283648",
+                        "on-primary-fixed": "#001a42",
+                        "surface": "#051425",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#ffdadb",
+                        "surface-container-high": "#1d2b3d",
+                        "on-background": "#d5e3fc",
+                        "on-primary": "#002e6a",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-bright": "#2c3a4d",
+                        "surface-container-lowest": "#010f20",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary": "#adc6ff",
+                        "on-secondary": "#003824",
+                        "inverse-primary": "#005ac2",
+                        "on-tertiary-fixed-variant": "#92002a",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-dim": "#051425",
+                        "background": "#051425",
+                        "secondary": "#4edea3",
+                        "on-secondary-container": "#00311f",
+                        "on-primary-container": "#00285d",
+                        "inverse-surface": "#d5e3fc",
+                        "on-primary-fixed-variant": "#004395",
+                        "tertiary-container": "#ff516a",
+                        "on-secondary-fixed": "#002113",
+                        "surface-container": "#122032",
+                        "inverse-on-surface": "#233144",
+                        "error": "#ffb4ab",
+                        "outline": "#8c909f",
+                        "on-tertiary": "#67001b",
+                        "error-container": "#93000a",
+                        "secondary-container": "#00a572",
+                        "surface-container-highest": "#283648",
+                        "tertiary-fixed-dim": "#ffb2b7",
+                        "surface-tint": "#adc6ff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-fixed": "#40000d",
+                        "on-tertiary-container": "#5b0017",
+                        "surface-container-low": "#0d1c2e",
+                        "tertiary": "#ffb2b7",
+                        "primary-container": "#4d8eff",
+                        "on-surface-variant": "#c2c6d6",
+                        "on-surface": "#d5e3fc",
+                        "secondary-fixed": "#6ffbbe",
+                        "outline-variant": "#424754",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "48px"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #051425;
+            color: #d5e3fc;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pixel-glow {
+            box-shadow: 0 0 40px rgba(173, 198, 255, 0.15);
+        }
+        .glass-panel {
+            background: rgba(18, 32, 50, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(140, 144, 159, 0.2);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased">
+
+<header class="fixed top-0 w-full flex justify-center items-center px-gutter py-4 bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/20 z-50">
+    <div class="max-w-[1440px] w-full flex justify-between items-center px-md">
+        <div class="flex items-center gap-xl flex-1">
+            <span class="font-headline-md text-[22px] font-bold text-primary tracking-tight">SQL Mastery HUD</span>
+            <nav class="flex gap-xl items-center ml-lg">
+                <a class="font-label-caps text-[12px] text-on-surface-variant font-medium hover:text-primary transition-all tracking-wider" href="dashboard.html">INÍCIO</a>
+                <a class="font-label-caps text-[12px] text-primary font-bold border-b-2 border-primary pb-1 tracking-wider" href="#">LOJA</a>
+            </nav>
+        </div>
+
+        <div class="flex items-center gap-lg">
+            <div class="flex items-center gap-sm bg-primary/10 border border-primary/30 px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(173,198,255,0.2)]">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1; font-size: 18px;">bolt</span>
+                <span class="font-label-caps text-[12px] font-bold text-primary">3.450 XP</span>
+            </div>
+
+            <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary p-0.5 shadow-[0_0_15px_rgba(173,198,255,0.2)]">
+                <img class="w-full h-full rounded-full object-cover" alt="Avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=SQLMaster">
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="pt-32 min-h-screen flex flex-col items-center justify-center px-gutter pb-32">
+    <div class="w-full max-w-[1440px] mx-auto px-md mb-xl text-center">
+        <h1 class="font-headline-lg text-3xl text-primary tracking-tight drop-shadow-[0_0_10px_rgba(173,198,255,0.5)] uppercase font-bold">
+            Loja de Itens SQL
+        </h1>
+        <div class="h-1 w-24 bg-primary mx-auto mt-4 rounded-full shadow-[0_0_15px_rgba(173,198,255,0.8)]"></div>
+    </div>
+
+    <div class="w-full max-w-[1440px] mx-auto px-md">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center items-stretch">
+            
+            <div class="flex flex-col h-full w-full max-w-[220px] transition-transform hover:scale-105 duration-200 bg-surface-container-low rounded-lg border border-outline-variant/20 overflow-hidden">
+                <div class="aspect-square w-full bg-surface-container-highest/30 flex items-center justify-center p-4">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDzQ-jrx2vcu878qRA-kDoEU1Wus3fCoTAZdqnrVhZ5O8hL-6Qj6uo7EzqFViBqutCpnIQdNs6m76OSfEDxkNtP6Z2C4ltt2OWhGQz9kOW8swFlbg_XpfODI0m3XWkW47UjhntzD0OU_1fSzneI19PNkfLEpcNDDhesx3z5304J7rhYXpwYf500BIbNhuwBk2LjGLIckgynpjStxqaYkxloUOZ7opw7Zy5MOc1rUN0fISF2PMwT-ePJy_2eqnMc296nZn3qEWvuUbt" alt="Chapéu de Mago SQL" class="w-full h-full object-contain" style="image-rendering: pixelated;">
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <button class="w-full py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:shadow-[0_0_15px_rgba(78,222,163,0.5)] transition-all active:scale-95 font-mono text-[11px] uppercase flex items-center justify-center gap-xs">
+                        <span>Comprar • 450</span>
+                        <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col h-full w-full max-w-[220px] transition-transform hover:scale-105 duration-200 bg-surface-container-low rounded-lg border border-outline-variant/20 overflow-hidden">
+                <div class="aspect-square w-full bg-surface-container-highest/30 flex items-center justify-center p-4">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoEe4urAv03Zh3a77Mb229PgAo2EWMEi8tZncRnWRHor-fCTlfF0g-hAZlOiJkxmPUEE0nWqsZFKwNfvQ66b5vWtG7L5qr5orBeEJW0fbL3uufx3fmSMn_7vyrdMlgt3kki52b1rvKn4euG3pLXmt45f45S9njgu6JXNLQe62uI7DiQ7NFuz8NWt90ZxOWxnRh__bwQO_BBBhwy6EueiIzkXGsfh-L_0VndQF4PCKpZfwYXYArO2xYEmSJSGEm4-L8EvAoyr2j223d" alt="Óculos Hacker" class="w-full h-full object-contain" style="image-rendering: pixelated;">
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <button class="w-full py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:shadow-[0_0_15px_rgba(78,222,163,0.5)] transition-all active:scale-95 font-mono text-[11px] uppercase flex items-center justify-center gap-xs">
+                        <span>Comprar • 200</span>
+                        <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col h-full w-full max-w-[220px] transition-transform hover:scale-105 duration-200 bg-surface-container-low rounded-lg border border-outline-variant/20 overflow-hidden">
+                <div class="aspect-square w-full bg-surface-container-highest/30 flex items-center justify-center p-4">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-AcVrouRdNa1qbbL-riSJVye5Ju0VLzHt8A6i3BRcrWFO-uGRJQPfSDl5MxflCuiyiLLXb2W-Fbdm7slz960t_1Li7YopEUTh-pJX3w5dvCAfA9Yd0xy_JvvX9awePkCpeszlsO4HMEz9nUMAkG_kdHQXi2PztlsYmeg7VRdX8iLNZWsVdydMy0j-5RBkZJTVm5tXUiNbMxUUIsF5IHnMHra0OCFoACn-o0D8Gy1b9M5bw2034mMefb5J4PkTzBw1VTcCcAsiO8I-" alt="Coroa de Query" class="w-full h-full object-contain" style="image-rendering: pixelated;">
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <button class="w-full py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:shadow-[0_0_15px_rgba(78,222,163,0.5)] transition-all active:scale-95 font-mono text-[11px] uppercase flex items-center justify-center gap-xs">
+                        <span>Comprar • 1.200</span>
+                        <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col h-full w-full max-w-[220px] transition-transform hover:scale-105 duration-200 bg-surface-container-low rounded-lg border border-outline-variant/20 overflow-hidden">
+                <div class="aspect-square w-full bg-surface-container-highest/30 flex items-center justify-center p-4">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU-0YTmT2IgisXBHUV1W3hVZe_Rl4rB7gMuIT3jeQzUq_XJ_Brt6V0m6ls53G6vukxayM6ASSpEd4ms4zBnO_HUpdNiIbZ_PFVjp0zz4t6T-DyYuhxNV_vBwT7jFKZJ88nqI-1DSEhXftGW9N9YChE10NwuqQ3beWUwcMySBfWPLXS1nQCVdLGN6sjLduuK9qogB1hCCaipTuGRbEh8l7SgozkOvUvzuEbSfqbnPGylkyr_lfNFQnS6fqjUsOZY73jOKliEzl0HKO3" alt="Boné com Logo" class="w-full h-full object-contain" style="image-rendering: pixelated;">
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <button class="w-full py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:shadow-[0_0_15px_rgba(78,222,163,0.5)] transition-all active:scale-95 font-mono text-[11px] uppercase flex items-center justify-center gap-xs">
+                        <span>Comprar • 150</span>
+                        <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col h-full w-full max-w-[220px] transition-transform hover:scale-105 duration-200 bg-surface-container-low rounded-lg border border-outline-variant/20 overflow-hidden">
+                <div class="aspect-square w-full bg-surface-container-highest/30 flex items-center justify-center p-4">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf9QHA4IqE9jx2O4d6VtgO9Z7EDh-q5D8dGC_sxPXG6i2hjQ-OxNJeyJydAsUI5rBQmKbtttZMOjyeTKGCHJHzdoUoWy7_E04GiozgxwIDDQKa1ouPDqWknXJ3rKnyM9XnJ-apy9qoGELJ3jar1KLwdGk4TrANNamduEeQGPLwcSgO7g3rquPHbe8MtRuZPEiyyfFaCLF_4KHaFbRiDkfI0C3llU8RSRCEgYASG8DU9QWskloLtD7tC2Gr4B9bqkOUQlOEo6inZXDL" alt="Capa de Dados" class="w-full h-full object-contain" style="image-rendering: pixelated;">
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <button class="w-full py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:shadow-[0_0_15px_rgba(78,222,163,0.5)] transition-all active:scale-95 font-mono text-[11px] uppercase flex items-center justify-center gap-xs">
+                        <span>Comprar • 850</span>
+                        <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest/90 backdrop-blur-xl border-t border-outline-variant/20 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+    <div class="flex justify-around items-center h-20 px-md pb-safe">
+        <button onclick="window.location.href='dashboard.html'" class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-primary transition-all active:scale-90 duration-150">
+            <span class="material-symbols-outlined">school</span>
+            <span class="font-label-caps text-[10px]">Trilha</span>
+        </button>
+        <button class="flex flex-col items-center justify-center text-primary transition-all active:scale-90 duration-150">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+            <span class="font-label-caps text-[10px] font-bold">Loja</span>
+        </button>
+        <button class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-primary transition-all active:scale-90 duration-150">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-label-caps text-[10px]">Perfil</span>
+        </button>
+    </div>
+</footer>
+
+<script>
+    const container = document.querySelector('.animate-float');
+    if (container && window.innerWidth > 768) {
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 40;
+            const y = (window.innerHeight / 2 - e.pageY) / 40;
+            container.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${-x}deg)`;
+        });
+        
+        document.addEventListener('mouseleave', () => {
+            container.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+    }
+</script>
+</body>
+</html>

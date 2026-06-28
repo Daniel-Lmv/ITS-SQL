@@ -28,13 +28,13 @@ class TutorService:
         conn = TutorService.get_connection()
         cursor = conn.cursor()
 
-        # 1. Tenta buscar o mix balanceado de dificuldades
+        # 1. Tenta buscar o mix balanceado de dificuldades (trazendo resposta_correta)
         mix_config = [(1, 4), (2, 3), (3, 3)] # (dificuldade, quantidade)
         questoes_sorteadas = []
 
         for diff, qtd in mix_config:
             cursor.execute("""
-                SELECT id, conceito_id, enunciado, alternativa_a, alternativa_b, alternativa_c, alternativa_d, dificuldade
+                SELECT id, conceito_id, enunciado, alternativa_a, alternativa_b, alternativa_c, alternativa_d, resposta_correta, dificuldade
                 FROM questoes
                 WHERE conceito_id = ? AND dificuldade = ?
                 ORDER BY RANDOM()
@@ -42,16 +42,14 @@ class TutorService:
             """, (conceito_id, diff, qtd))
             questoes_sorteadas.extend([dict(row) for row in cursor.fetchall()])
 
-        # 2. Fallback: Se o mix não completou 10 questões (banco com poucas questões específicas),
-        # pegamos o restante de qualquer dificuldade de forma totalmente aleatória.
+        # 2. Fallback: Se o mix não completou 10 questões
         if len(questoes_sorteadas) < 10:
             ids_ja_escolhidos = [q["id"] for q in questoes_sorteadas]
             falta = 10 - len(questoes_sorteadas)
             
-            # Formata os IDs ignorados para a query SQL
             placeholders = ",".join("?" for _ in ids_ja_escolhidos)
             query_fallback = f"""
-                SELECT id, conceito_id, enunciado, alternativa_a, alternativa_b, alternativa_c, alternativa_d, dificuldade
+                SELECT id, conceito_id, enunciado, alternativa_a, alternativa_b, alternativa_c, alternativa_d, resposta_correta, dificuldade
                 FROM questoes
                 WHERE conceito_id = ?
                 {"AND id NOT IN (" + placeholders + ")" if ids_ja_escolhidos else ""}
@@ -61,6 +59,11 @@ class TutorService:
             params = [conceito_id] + ids_ja_escolhidos + [falta]
             cursor.execute(query_fallback, params)
             questoes_sorteadas.extend([dict(row) for row in cursor.fetchall()])
+
+        # 3. Busca o nome do conceito para personificar o Header da página
+        cursor.execute("SELECT nome FROM conceitos WHERE id = ?", (conceito_id,))
+        conceito_row = cursor.fetchone()
+        conceito_nome = conceito_row["nome"] if conceito_row else "Exercícios de SQL"
 
         conn.close()
 
@@ -73,8 +76,9 @@ class TutorService:
         return {
             "status": "success",
             "conceito_id": conceito_id,
+            "conceito_nome": conceito_nome,
             "total_questoes": len(questoes_sorteadas),
-            "questoes": questoes_sorteadas # Prontas para o frontend gerenciar de 1 a 10
+            "questoes": questoes_sorteadas 
         }
 
     @staticmethod

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SQL Mastery HUD - Central de Teoria</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { backdrop-filter: blur(12px); background: rgba(18, 32, 50, 0.7); border: 1px solid rgba(140, 144, 159, 0.2); }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #010f20; }
+        ::-webkit-scrollbar-thumb { background: #283648; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #adc6ff; }
+
+        .neon-glow {
+            box-shadow: 0 0 25px rgba(78, 222, 163, 0.2);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(78, 222, 163, 0.3);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#283648", "tertiary-container": "#ff516a", "on-error": "#690005",
+                        "primary-fixed-dim": "#adc6ff", "surface": "#051425", "surface-container-lowest": "#010f20",
+                        "background": "#051425", "on-surface": "#d5e3fc", "secondary": "#4edea3", "primary": "#adc6ff",
+                        "surface-container-low": "#0d1c2e", "surface-container-high": "#1d2b3d", "outline-variant": "#424754"
+                    },
+                    "fontFamily": { "code-md": ["JetBrains Mono"], "body-md": ["Inter"] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen flex flex-col overflow-hidden">
+
+<!-- TopAppBar HUD -->
+<header class="w-full h-[60px] flex justify-between items-center px-6 bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant/30 flex-shrink-0 z-50">
+    <div class="flex items-center gap-4">
+        <span class="text-[18px] font-bold text-primary tracking-tight">SQL Mastery HUD</span>
+        <div class="h-4 w-px bg-outline-variant/30 mx-2"></div>
+        <nav class="flex gap-4">
+            <span class="text-primary-fixed-dim text-sm font-semibold font-mono uppercase tracking-wider">Módulo Teórico</span>
+        </nav>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full border border-outline-variant/20">
+            <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+            <span id="hud-xp" class="text-[12px] font-mono text-on-surface">1,240 XP</span>
+        </div>
+    </div>
+</header>
+
+<!-- Main Workspace Split -->
+<main class="flex-1 p-4 flex flex-col gap-4 min-h-0 overflow-hidden max-w-[1600px] w-full mx-auto">
+    
+    <!-- Dynamic Workspace Header -->
+    <div class="flex justify-between items-end flex-shrink-0">
+        <h1 id="lesson-module-title" class="text-[22px] text-on-surface font-bold tracking-tight">Carregando Teoria...</h1>
+    </div>
+
+    <!-- Grid de Conteúdo Controlado -->
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden">
+        
+        <!-- COLUNA DA ESQUERDA (4 Colunas): Chat Informativo -->
+        <div class="lg:col-span-4 flex flex-col min-h-0 h-full">
+            <section class="glass-panel rounded-xl flex-1 flex flex-col overflow-hidden border border-primary/20 bg-surface-container-low">
+                <div class="p-3 border-b border-outline-variant/30 bg-surface-container-high flex items-center gap-2 flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+                    <h2 class="text-[12px] font-bold text-primary uppercase tracking-wider">Professor Virtual</h2>
+                </div>
+                
+                <!-- Chat Message Area -->
+                <div id="chat-message-area" class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                    <div class="flex flex-col gap-1 max-w-[90%]">
+                        <span class="text-[10px] font-mono text-primary ml-1">PROFESSOR</span>
+                        <div class="bg-surface-container-highest p-3 rounded-lg rounded-tl-none border border-outline-variant/20 text-[13px] text-on-surface leading-relaxed">
+                            Bem-vindo ao estudo conceitual! Resolva as questões avaliativas ao lado vindas do banco de dados. Caso tenha dúvidas teóricas sobre a sintaxe ou erre alguma alternativa, use este chat para conversar comigo.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="p-3 border-t border-outline-variant/30 bg-surface-container-lowest flex-shrink-0">
+                    <div class="relative flex items-center">
+                        <input id="chat-input" spellcheck="false" class="w-full bg-surface-container text-black px-3 py-2 rounded-lg border border-outline-variant/30 text-[13px] focus:outline-none focus:border-primary/50 pr-10 font-sans" placeholder="Digite sua dúvida teórica..." type="text">
+                        <button id="chat-send-btn" class="absolute right-3 text-primary hover:text-primary-container flex items-center">
+                            <span class="material-symbols-outlined text-[20px]">send</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- COLUNA DA DIREITA (8 Colunas): Central de Questões e Tela de Sucesso integrada -->
+        <div id="quiz-pane-right" class="lg:col-span-8 flex flex-col min-h-0 h-full bg-surface-container-low rounded-xl border border-outline-variant/20 p-5 justify-between overflow-hidden shadow-inner relative">
+            
+            <!-- 1. Container interno de Questão (Fica oculto na conclusão) -->
+            <div id="quiz-question-wrapper" class="flex-1 min-h-0 overflow-y-auto pr-2 space-y-4">
+                <div class="flex justify-between items-center border-b border-outline-variant/20 pb-3 flex-shrink-0">
+                    <h2 id="quiz-question-counter" class="text-[14px] text-on-surface font-semibold font-mono">Questão 0 de 0</h2>
+                    <span id="quiz-diff-badge" class="px-2 py-0.5 bg-primary/10 border border-primary/30 text-primary rounded text-[10px] font-mono uppercase tracking-wider">DIFICULDADE</span>
+                </div>
+
+                <!-- Enunciado -->
+                <h1 id="quiz-question-title" class="text-[16px] md:text-[17px] leading-relaxed text-on-surface font-medium pt-1">
+                    Carregando enunciado do banco de dados...
+                </h1>
+
+                <!-- Opções de Escolha Objetiva -->
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-3 pt-2"></div>
+            </div>
+
+            <!-- Feedback de Alerta Local -->
+            <p id="error-alert" class="text-tertiary-container text-[12px] hidden items-center gap-1 mt-3 flex-shrink-0">
+                <span class="material-symbols-outlined text-[15px]">error</span> Selecione uma das opções antes de enviar.
+            </p>
+
+            <!-- 2. Tela de Conclusão e Sucesso HUD (Inicialmente oculta) -->
+            <div id="quiz-success-wrapper" class="hidden flex-1 flex flex-col items-center justify-center text-center space-y-6 p-6 min-h-0 overflow-y-auto">
+                <div class="w-20 h-20 rounded-full bg-secondary/15 border-2 border-secondary flex items-center justify-center neon-glow animate-bounce">
+                    <span class="material-symbols-outlined text-secondary text-[40px] text-glow">workspace_premium</span>
+                </div>
+                <div class="space-y-2 max-w-lg">
+                    <h2 class="text-secondary text-[24px] font-bold tracking-tight uppercase text-glow">Módulo Finalizado!</h2>
+                    <p class="text-[14px] text-on-surface-variant leading-relaxed">
+                        Parabéns! Você completou com sucesso todos os exercícios de teoria práticos deste módulo. Suas métricas de proficiência e XP foram totalmente sincronizadas.
+                    </p>
+                </div>
+                <div class="pt-4">
+                    <button onclick="window.location.href='dashboard.html'" class="px-8 py-3.5 bg-secondary text-surface-container-lowest font-bold text-[15px] rounded-xl flex items-center gap-3 transition-all active:scale-95 shadow-[0_0_20px_rgba(78,222,163,0.3)] hover:brightness-110">
+                        <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Voltar ao Menu Principal
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<!-- HUD Footer Navigation -->
+<footer class="w-full h-[70px] bg-surface-dim/95 backdrop-blur-md border-t border-outline-variant/20 px-6 flex items-center flex-shrink-0 z-50">
+    <div class="max-w-[1600px] w-full mx-auto flex items-center justify-between gap-4">
+        <div class="flex flex-col gap-1">
+            <span id="hud-progress-text" class="text-[11px] text-on-surface-variant font-mono">Questão 0 de 10</span>
+            <div id="hud-dots-container" class="flex gap-1.5"></div>
+        </div>
+        <div id="footer-actions" class="flex items-center gap-4">
+            <button id="skip-btn" class="text-on-surface-variant hover:text-on-surface text-[13px] font-semibold transition-colors">Pular</button>
+            <button id="next-btn" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-surface-container-lowest font-bold text-[14px] rounded-xl flex items-center gap-2 transition-all active:scale-95 shadow-md">
+                <span id="next-btn-text">Enviar Resposta</span>
+                <span class="material-symbols-outlined text-[18px]">send</span>
+            </button>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    const userId = localStorage.getItem('user_id') || 1;
+
+    // CAPTURA AUTOMÁTICA DA URL (?conceito=X)
+    const urlParams = new URLSearchParams(window.location.search);
+    const conceitoId = parseInt(urlParams.get('conceito')) || 1;
+
+    let questionsList = [];
+    let currentQuestionIndex = 0;
+    let selectedOption = null;
+    let questionStatus = []; 
+    let chatHistory = [];
+    let nomeConceitoGlobal = "Exercícios de SQL";
+
+    const moduleTitle = document.getElementById('lesson-module-title');
+    const counterEl = document.getElementById('quiz-question-counter');
+    const diffBadge = document.getElementById('quiz-diff-badge');
+    const titleEl = document.getElementById('quiz-question-title');
+    const optionsContainer = document.getElementById('quiz-options-container');
+    const nextBtn = document.getElementById('next-btn');
+    const nextBtnText = document.getElementById('next-btn-text');
+    const errorAlert = document.getElementById('error-alert');
+    const dotsContainer = document.getElementById('hud-dots-container');
+    const progressText = document.getElementById('hud-progress-text');
+    const chatMessageArea = document.getElementById('chat-message-area');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
+    
+    const quizQuestionWrapper = document.getElementById('quiz-question-wrapper');
+    const quizSuccessWrapper = document.getElementById('quiz-success-wrapper');
+    const footerActions = document.getElementById('footer-actions');
+
+    async function inicializarModulo() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/tutor/lesson/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: parseInt(userId), conceito_id: conceitoId })
+            });
+            const data = await response.json();
+            
+            if (data.status === "success" && data.questoes) {
+                questionsList = data.questoes;
+                nomeConceitoGlobal = data.conceito_nome || "Exercícios de SQL";
+                moduleTitle.textContent = `Teoria Prática: ${nomeConceitoGlobal}`;
+                questionStatus = new Array(questionsList.length).fill('pendente');
+                
+                construirBolinhasProgresso();
+                renderizarQuestao();
+            } else {
+                titleEl.textContent = "Nenhum exercício encontrado para este módulo.";
+            }
+        } catch (error) {
+            console.error(error);
+            titleEl.textContent = "Falha crítica ao conectar ao banco de dados remoto.";
+        }
+    }
+
+    function renderizarQuestao() {
+        selectedOption = null;
+        errorAlert.classList.add('hidden');
+        nextBtn.disabled = false;
+        nextBtnText.textContent = "Enviar Resposta";
+
+        if (questionsList.length === 0) return;
+        const q = questionsList[currentQuestionIndex];
+
+        counterEl.textContent = `Questão ${currentQuestionIndex + 1} de ${questionsList.length}`;
+        progressText.textContent = `Questão ${currentQuestionIndex + 1} de ${questionsList.length}`;
+        
+        const diffText = q.dificuldade === 1 ? "Fácil" : q.dificuldade === 2 ? "Média" : "Difícil";
+        diffBadge.textContent = `Dificuldade: ${diffText}`;
+
+        titleEl.textContent = q.enunciado;
+        destacarBolinhaAtiva();
+
+        optionsContainer.innerHTML = '';
+        const chaves = ["A", "B", "C", "D"];
+        
+        chaves.forEach(chave => {
+            const textoOpcao = q[`alternativa_${chave.toLowerCase()}`];
+            if (!textoOpcao) return;
+
+            const btn = document.createElement('button');
+            btn.className = "group flex items-center justify-between p-3.5 rounded-lg border border-outline-variant/50 hover:border-primary hover:bg-primary/5 transition-all w-full text-left bg-surface-container-low/50";
+            btn.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <span class="w-7 h-7 flex items-center justify-center rounded bg-surface-container border border-outline-variant/60 group-hover:border-primary group-hover:text-primary font-mono text-[13px] font-bold">${chave}</span>
+                    <span class="text-[14px] text-on-surface-variant group-hover:text-on-surface leading-tight">${textoOpcao}</span>
+                </div>
+            `;
+
+            btn.addEventListener('click', () => {
+                selectedOption = chave;
+                errorAlert.classList.add('hidden');
+                optionsContainer.querySelectorAll('button').forEach(b => b.classList.remove('border-primary', 'bg-primary/10'));
+                btn.classList.add('border-primary', 'bg-primary/10');
+            });
+
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    nextBtn.addEventListener('click', async () => {
+        if (!selectedOption) {
+            errorAlert.classList.remove('hidden');
+            errorAlert.style.display = 'flex';
+            return;
+        }
+
+        nextBtn.disabled = true;
+        nextBtnText.textContent = "Avaliando...";
+        const q = questionsList[currentQuestionIndex];
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/tutor/lesson/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: parseInt(userId),
+                    questao_id: q.id,
+                    resposta_aluno: selectedOption
+                })
+            });
+            const data = await response.json();
+
+            if (data.acertou) {
+                questionStatus[currentQuestionIndex] = 'correto';
+                atualizarEstiloBolinhas();
+                exibirMensagemChat("PROFESSOR", "Excelente trabalho! Resposta correta.");
+                
+                setTimeout(() => avancarFila(), 1200);
+            } else {
+                questionStatus[currentQuestionIndex] = 'incorreto';
+                atualizarEstiloBolinhas();
+                
+                exibirMensagemChat("PROFESSOR", `Notei que você marcou a alternativa ${selectedOption}, mas ela não é a correta. Se precisar de ajuda para entender este ponto, basta me chamar aqui no chat!`);
+                
+                nextBtn.disabled = false;
+                nextBtnText.textContent = "Tentar Novamente";
+            }
+        } catch (error) {
+            console.error(error);
+            nextBtn.disabled = false;
+            nextBtnText.textContent = "Enviar Resposta";
+        }
+    });
+
+    async function enviarDuvidaChat() {
+        const payloadText = chatInput.value.trim();
+        if (!payloadText) return;
+
+        exibirMensagemChat("VOCÊ", payloadText);
+        chatInput.value = '';
+        chatHistory.push({ role: "user", content: payloadText });
+
+        const qCorrente = questionsList[currentQuestionIndex] || {};
+        const loadingId = exibirMensagemLoading();
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/tutor/chat/professor-virtual`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    dados_questao: {
+                        enunciado: qCorrente.enunciado || 'Nenhum enunciado ativo',
+                        resposta_correta: qCorrente.resposta_correta || 'A', 
+                        resposta_aluno: selectedOption || 'Nenhuma selecionada',
+                        conceito_nome: nomeConceitoGlobal
+                    },
+                    historico_mensagens: chatHistory
+                })
+            });
+            
+            document.getElementById(loadingId)?.remove();
+
+            const data = await response.json();
+            if (data.response) {
+                exibirMensagemChat("PROFESSOR", data.response);
+                chatHistory.push({ role: "assistant", content: data.response });
+            }
+        } catch (error) {
+            document.getElementById(loadingId)?.remove();
+            exibirMensagemChat("PROFESSOR", "Tive uma instabilidade ao processar a dúvida com a IA. Pode reenviar?");
+        }
+    }
+
+    function exibirMensagemLoading() {
+        const id = "loading-" + Date.now();
+        const div = document.createElement('div');
+        div.id = id;
+        div.className = "flex flex-col gap-1 max-w-[85%]";
+        div.innerHTML = `
+            <span class="text-[10px] font-mono text-primary ml-1 animate-pulse">PROFESSOR</span>
+            <div class="bg-surface-container-highest/60 p-2.5 rounded-lg rounded-tl-none border border-outline-variant/10 text-[13px] text-on-surface/70 italic flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
+                Processando informação...
+            </div>
+        `;
+        chatMessageArea.appendChild(div);
+        chatMessageArea.scrollTop = chatMessageArea.scrollHeight;
+        return id;
+    }
+
+    function construirBolinhasProgresso() {
+        dotsContainer.innerHTML = '';
+        questionStatus.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.id = `hud-dot-${i}`;
+            dot.className = "w-2.5 h-2.5 rounded-full bg-surface-container-highest border border-outline-variant/30 transition-all duration-300";
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    function destacarBolinhaAtiva() {
+        questionStatus.forEach((_, i) => {
+            const d = document.getElementById(`hud-dot-${i}`);
+            if (!d) return;
+            if (i === currentQuestionIndex) {
+                d.className = "w-2.5 h-2.5 rounded-full bg-primary/30 border-2 border-primary scale-110 transition-all";
+            } else if (questionStatus[i] === 'pendente') {
+                d.className = "w-2.5 h-2.5 rounded-full bg-surface-container-highest border border-outline-variant/30 transition-all";
+            }
+        });
+    }
+
+    function atualizarEstiloBolinhas() {
+        questionStatus.forEach((status, i) => {
+            const d = document.getElementById(`hud-dot-${i}`);
+            if (!d) return;
+            if (status === 'correto') {
+                d.className = "w-2.5 h-2.5 rounded-full bg-secondary border border-secondary shadow-[0_0_8px_rgba(78,222,163,0.4)]";
+            } else if (status === 'incorreto') {
+                d.className = "w-2.5 h-2.5 rounded-full bg-tertiary-container border border-tertiary-container shadow-[0_0_8px_rgba(255,81,106,0.4)]";
+            }
+        });
+    }
+
+    function avancarFila() {
+        if (currentQuestionIndex < questionsList.length - 1) {
+            currentQuestionIndex++;
+            renderizarQuestao();
+        } else {
+            exibirTelaConclusao();
+        }
+    }
+
+    // NOVA FUNÇÃO: Substitui o painel de questões pela tela de sucesso e altera o HUD inferior
+    function exibirTelaConclusao() {
+        // Oculta a área de perguntas e de alertas
+        quizQuestionWrapper.classList.add('hidden');
+        errorAlert.classList.add('hidden');
+
+        // Exibe a tela de sucesso nativa
+        quizSuccessWrapper.classList.remove('hidden');
+
+        // Altera o rodapé para refletir o término
+        progressText.textContent = "Módulo de Teoria Finalizado!";
+        footerActions.classList.add('hidden'); // Esconde botões de avançar/pular
+
+        // Mensagem congratulatória do Tutor no chat lateral
+        exibirMensagemChat("PROFESSOR", "Parabéns por concluir todas as lições práticas deste módulo teórico! Seus esforços e proficiências foram totalmente computados em seu painel. Nos vemos no próximo tópico!");
+    }
+
+    function exibirMensagemChat(autor, texto) {
+        const div = document.createElement('div');
+        const belongsToUser = autor === "VOCÊ";
+        div.className = belongsToUser ? "flex flex-col gap-1 max-w-[85%] ml-auto items-end" : "flex flex-col gap-1 max-w-[85%]";
+        
+        const labelStyle = belongsToUser ? "text-secondary mr-1" : "text-primary ml-1";
+        const bubbleStyle = belongsToUser ? "bg-secondary/10 border-secondary/30 rounded-tr-none text-on-surface" : "bg-surface-container-highest border-outline-variant/20 rounded-tl-none text-on-surface";
+
+        let textoFormatado = texto;
+
+        textoFormatado = textoFormatado.replace(/```sql([\s\S]*?)```/g, function(match, code) {
+            return `<pre class="bg-surface-container-lowest/80 text-secondary font-mono text-[12px] p-2.5 rounded-md border border-outline-variant/40 my-2 overflow-x-auto w-full select-all"><code>${code.trim()}</code></pre>`;
+        });
+
+        textoFormatado = textoFormatado.replace(/`([^`]+)`/g, '<code class="bg-surface-container border border-outline-variant/30 px-1 py-0.5 rounded text-primary-fixed-dim font-mono text-[12px]">$1</code>');
+        textoFormatado = textoFormatado.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
+
+        div.innerHTML = `
+            <span class="text-[10px] font-mono ${labelStyle}">${autor}</span>
+            <div class="p-2.5 rounded-lg border text-[13px] leading-relaxed ${bubbleStyle}">${textoFormatado}</div>
+        `;
+        chatMessageArea.appendChild(div);
+        chatMessageArea.scrollTop = chatMessageArea.scrollHeight;
+    }
+
+    chatSendBtn.addEventListener('click', enviarDuvidaChat);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') enviarDuvidaChat(); });
+    document.getElementById('skip-btn').addEventListener('click', avancarFila);
+    window.addEventListener('DOMContentLoaded', inicializarModulo);
+</script>
+</body>
+</html>

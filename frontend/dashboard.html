@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SQL Mastery HUD - Progress Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#283648",
+                        "tertiary-container": "#ff516a",
+                        "on-error": "#690005",
+                        "on-primary-container": "#00285d",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "inverse-on-surface": "#233144",
+                        "inverse-primary": "#005ac2",
+                        "tertiary": "#ffb2b7",
+                        "on-tertiary-fixed-variant": "#92002a",
+                        "surface-tint": "#adc6ff",
+                        "tertiary-fixed-dim": "#ffb2b7",
+                        "outline-variant": "#424754",
+                        "surface": "#051425",
+                        "surface-container-lowest": "#010f20",
+                        "surface-dim": "#051425",
+                        "background": "#051425",
+                        "on-surface": "#d5e3fc",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#6ffbbe",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#283648",
+                        "surface-container-low": "#0d1c2e",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#c2c6d6",
+                        "secondary-container": "#00a572",
+                        "on-secondary": "#003824",
+                        "on-tertiary-container": "#5b0017",
+                        "primary-container": "#4d8eff",
+                        "surface-container": "#122032",
+                        "on-tertiary-fixed": "#40000d",
+                        "tertiary-fixed": "#ffdadb",
+                        "secondary": "#4edea3",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-secondary-container": "#00311f",
+                        "surface-container-high": "#1d2b3d",
+                        "inverse-surface": "#d5e3fc",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-tertiary": "#67001b",
+                        "on-background": "#d5e3fc",
+                        "on-primary-fixed": "#001a42",
+                        "on-primary": "#002e6a",
+                        "surface-bright": "#2c3a4d",
+                        "primary": "#adc6ff",
+                        "outline": "#8c909f",
+                        "on-secondary-fixed": "#002113"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "lg": "32px",
+                        "xl": "48px",
+                        "unit": "4px"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #051425;
+            color: #d5e3fc;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(18, 32, 50, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(140, 144, 159, 0.2);
+        }
+        .hud-glass {
+            background: rgba(18, 32, 50, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(140, 144, 159, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-gradient {
+            background: linear-gradient(90deg, #00a572 0%, #4edea3 100%);
+        }
+        .card-id-glow {
+            text-shadow: 0 0 15px rgba(173, 198, 255, 0.4);
+        }
+        .scrollbar-thin::-webkit-scrollbar { width: 8px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #010f20; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #1d2b3d; border-radius: 10px; border: 2px solid #010f20; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #adc6ff; }
+        
+        .grayscale-locked {
+            filter: grayscale(1) opacity(0.25);
+            pointer-events: none;
+            user-select: none;
+        }
+        .active-pulse {
+            animation: pulse-glow 2.5s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(173, 198, 255, 0.1); border-color: rgba(173, 198, 255, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(173, 198, 255, 0.3); border-color: rgba(173, 198, 255, 0.6); }
+        }
+        .medal-glow-blue {
+            box-shadow: 0 0 30px rgba(77, 142, 255, 0.25);
+        }
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.05) 50%, transition-all duration-500 ease-in-out), url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%23ffffff" fill-opacity=".05" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+            transform: rotate(-90deg);
+            transform-origin: top left;
+        }
+        .shine-effect:hover::after {
+            transform: translate(25%, 25%) rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased scrollbar-thin">
+
+<header class="fixed top-0 w-full flex justify-center items-center px-gutter py-4 bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/20 z-50">
+<div class="max-w-[1440px] w-full flex justify-between items-center px-md">
+    <div class="flex items-center gap-xl">
+        <span class="font-headline-md text-[22px] font-bold text-primary tracking-tight">SQL Mastery HUD</span>
+        <nav class="hidden md:flex gap-xl items-center">
+            <a class="font-label-caps text-[12px] text-primary font-bold border-b-2 border-primary pb-1 tracking-wider" href="#">INÍCIO</a>
+            <a class="font-label-caps text-[12px] text-on-surface-variant font-medium hover:text-primary transition-all tracking-wider" href="loja.html">LOJA</a>
+            <a class="font-label-caps text-[12px] text-on-surface-variant font-medium hover:text-primary transition-all tracking-wider" href="#" id="logout-btn">SAIR</a>
+        </nav>
+    </div>
+    <div class="flex items-center gap-lg">
+        <div class="flex items-center gap-lg bg-surface-container/60 px-6 py-2 rounded-full border border-outline-variant/30">
+            <div class="flex items-center gap-sm">
+                <span class="material-symbols-outlined text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                <span class="font-label-caps text-[12px] font-bold">3</span>
+            </div>
+            <div class="w-px h-5 bg-outline-variant/40"></div>
+            <div class="flex items-center gap-sm">
+                <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+                <span class="font-label-caps text-[12px] font-bold" id="user-xp-label">0 XP</span>
+            </div>
+        </div>
+        <div class="w-12 h-12 rounded-full border-2 border-primary p-0.5 shadow-[0_0_15px_rgba(173,198,255,0.2)]">
+            <img alt="Avatar" class="w-full h-full rounded-full object-cover" src="https://api.dicebear.com/7.x/bottts/svg?seed=SQLMaster"/>
+        </div>
+    </div>
+</div>
+</header>
+
+<main class="pt-32 pb-xl px-gutter min-h-screen">
+<div class="max-w-[1440px] mx-auto">
+    
+    <section class="glass-panel rounded-2xl p-6 mb-6 shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-4 gap-md">
+            <div>
+                <h1 class="font-headline-md text-[22px] text-on-surface mb-1" id="welcome-title">Seu Progresso</h1>
+                <p class="font-body-sm text-[14px] text-secondary font-semibold" id="global-progress-desc">Sincronizando trilha com banco de dados...</p>
+            </div>
+            <div class="flex flex-col items-end gap-xs">
+                <div id="dots-indicator-container" class="flex gap-2 mb-1">
+                    </div>
+                <div class="flex gap-md text-[10px] font-label-caps text-on-surface-variant/80 tracking-widest uppercase">
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Dominado</span>
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full border border-secondary"></span> Disponível</span>
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-surface-variant"></span> Bloqueado</span>
+                </div>
+            </div>
+        </div>
+        <div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden p-0.5 border border-outline-variant/30">
+            <div id="global-progress-bar" class="h-full progress-gradient w-[0%] rounded-full transition-all duration-1000 relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/10 animate-pulse"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="modules-grid-container">
+        </div>
+</div>
+</main>
+
+<script>
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    const userId = localStorage.getItem('user_id');
+    const userEmail = localStorage.getItem('user_email');
+
+    // Ícones temáticos para cada um dos 8 conceitos da trilha
+    const iconesMapeados = {
+        1: "token",         // SELECT
+        2: "filter_list",   // WHERE
+        3: "sort",          // ORDER BY
+        4: "group",         // GROUP BY
+        5: "analytics",     // HAVING
+        6: "join",          // INNER JOIN
+        7: "join_inner",    // LEFT JOIN
+        8: "layers"         // SUBQUERIES
+    };
+
+    // Descrições pedagógicas sob medida para o HUD
+    const descricoesMapeadas = {
+        1: "Recuperação básica de dados e projeções estruturadas.",
+        2: "Filtragem de registros com predicados e condições lógicas.",
+        3: "Ordenação e refinamento estético de amostragem de dados.",
+        4: "Agrupamento estrutural e sumarização por colunas-chave.",
+        5: "Filtros lógicos aplicados pós-processamento de agregados.",
+        6: "Interseção exata entre conjuntos de dados relacionais.",
+        7: "Preservação de registros dominantes à esquerda com nulos.",
+        8: "Modularização e aninhamento complexo de queries pai/filho."
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        // Trava de segurança imediata
+        if (!userId) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        if (userEmail) {
+            document.getElementById('welcome-title').textContent = `Painel de Operações: ${userEmail.split('@')[0]}`;
+        }
+
+        renderizarDashboardCompleto();
+    });
+
+    async function renderizarDashboardCompleto() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/progresso/${userId}`);
+            if (!response.ok) throw new Error("Erro ao coletar dados do servidor.");
+
+            const data = await response.json();
+            const progressoLista = data.progresso; // Lista com os 8 conceitos
+
+            const gridContainer = document.getElementById('modules-grid-container');
+            const dotsContainer = document.getElementById('dots-indicator-container');
+            gridContainer.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            let somaNiveis = 0;
+            let totalConceitos = progressoLista.length;
+            let concluidosCount = 0;
+
+            progressoLista.forEach((módulo, index) => {
+                somaNiveis += módulo.nivel;
+                const cId = módulo.conceito_id;
+                const stringId = String(cId).padStart(2, '0');
+                const icone = iconesMapeados[cId] || "database";
+                const descricao = descricoesMapeadas[cId] || "Tópico de estudo em banco de dados SQL.";
+
+                // 1. Renderiza o indicador de bolinhas no topo
+                const dot = document.createElement('div');
+                if (módulo.ganhou_trofeu) {
+                    dot.className = "w-3 h-3 rounded-full bg-secondary shadow-[0_0_12px_rgba(78,222,163,0.6)]";
+                    concluidosCount++;
+                } else if (módulo.liberado) {
+                    dot.className = "w-3 h-3 rounded-full border-2 border-secondary/60 animate-pulse";
+                } else {
+                    dot.className = "w-3 h-3 rounded-full bg-surface-variant";
+                }
+                dotsContainer.appendChild(dot);
+
+                // 2. Cria a estrutura do Card baseada nos status reais do Grafo do backend
+                const card = document.createElement('div');
+
+                if (!módulo.liberado) {
+                    // Estado Bloqueado (Locked)
+                    card.className = "glass-panel rounded-2xl p-6 relative grayscale-locked border-outline-variant/20";
+                    card.innerHTML = `
+                        <span class="absolute top-4 left-4 font-code-md text-4xl font-bold text-outline/5 font-mono">${stringId}</span>
+                        <div class="flex flex-col items-center gap-4 py-4">
+                            <div class="w-16 h-16 bg-surface-container rounded-xl flex items-center justify-center border border-outline-variant/20">
+                                <span class="material-symbols-outlined text-on-surface-variant/30 text-3xl">lock</span>
+                            </div>
+                            <h3 class="font-headline-md text-lg text-on-surface-variant/50 font-bold tracking-wide uppercase">${módulo.nome}</h3>
+                        </div>
+                        <div class="flex gap-2 mt-4">
+                            <button class="flex-1 px-2 py-3 rounded-xl bg-surface-container-low border border-outline-variant/10 text-on-surface-variant/20 text-xs font-bold cursor-not-allowed uppercase font-mono">Teoria</button>
+                            <button class="flex-1 px-2 py-3 rounded-xl bg-surface-container-low border border-outline-variant/10 text-on-surface-variant/30 text-xs font-bold cursor-not-allowed uppercase font-mono">Lab</button>
+                        </div>
+                    `;
+                } else if (módulo.ganhou_trofeu) {
+                    // Estado Dominado / Concluído (Mastered) -> AGORA COM ACESSO COMPLETO À REVISÃO
+                    card.className = "hud-glass shine-effect rounded-2xl p-6 flex flex-col items-center text-center group hover:scale-[1.02] hover:border-secondary/40";
+                    card.innerHTML = `
+                        <div class="relative mb-4">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary-container to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(78,222,163,0.25)] rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                                <span class="material-symbols-outlined text-3xl text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">${icone}</span>
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 bg-secondary text-on-secondary px-1.5 py-0.5 rounded-md font-mono text-[9px] font-bold">${Math.round(módulo.nivel)}%</div>
+                        </div>
+                        <h3 class="font-headline-md text-lg text-secondary mb-1 tracking-wide uppercase font-bold">${módulo.nome}</h3>
+                        <p class="text-on-surface-variant text-[14px] mb-4 px-1 leading-relaxed">${descricao}</p>
+                        
+                        <div class="w-full mb-4 py-1.5 bg-secondary/15 border border-secondary/30 rounded-xl text-secondary font-bold text-xs tracking-wider uppercase font-mono">
+                            🏆 Dominado
+                        </div>
+
+                        <div class="mt-auto w-full flex gap-2 relative z-10">
+                            <button class="flex-1 px-2 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1 hover:brightness-110 shadow-lg active:scale-95 transition-all font-mono uppercase" onclick="iniciarModulo(${cId}, 'teoria')">
+                                <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">play_arrow</span> Teoria
+                            </button>
+                            <button class="flex-1 px-2 py-3 rounded-xl bg-secondary text-on-secondary font-bold text-xs flex items-center justify-center gap-1 hover:brightness-110 shadow-lg active:scale-95 transition-all font-mono uppercase" onclick="iniciarModulo(${cId}, 'lab')">
+                                <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">terminal</span> Lab
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // Estado Ativo / Disponível para estudo (Active/Pulse)
+                    card.className = "glass-panel rounded-2xl p-6 relative group active-pulse border-primary/50 shadow-xl overflow-hidden hover:scale-[1.01] transition-transform";
+                    card.innerHTML = `
+                        <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <span class="absolute top-4 left-4 font-code-md text-4xl font-bold text-primary/15 card-id-glow font-mono">${stringId}</span>
+                        <div class="flex flex-col items-center gap-4 py-2 relative z-10">
+                            <div class="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30 shadow-inner">
+                                <span class="material-symbols-outlined text-primary text-3xl">${icone}</span>
+                            </div>
+                            <h3 class="font-headline-md text-lg text-on-surface font-bold tracking-wide uppercase">${módulo.nome}</h3>
+                            <div class="w-full mt-1">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-mono text-[10px] text-primary tracking-widest uppercase font-bold">${Math.round(módulo.nivel)}% Completo</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden p-0.5 border border-outline-variant/30">
+                                    <div class="h-full bg-primary rounded-full shadow-[0_0_12px_rgba(173,198,255,0.5)]" style="width: ${módulo.nivel}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-4 relative z-10">
+                            <button class="flex-1 px-2 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1 hover:brightness-110 shadow-lg active:scale-95 transition-all font-mono uppercase" onclick="iniciarModulo(${cId}, 'teoria')">
+                                <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">play_arrow</span> Teoria
+                            </button>
+                            <button class="flex-1 px-2 py-3 rounded-xl bg-secondary text-on-secondary font-bold text-xs flex items-center justify-center gap-1 hover:brightness-110 shadow-lg active:scale-95 transition-all font-mono uppercase" onclick="iniciarModulo(${cId}, 'lab')">
+                                <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">terminal</span> Lab
+                            </button>
+                        </div>
+                    `;
+                }
+
+                gridContainer.appendChild(card);
+            });
+
+            // 3. Atualiza os labels globais de progresso no topo de forma ponderada
+            const mediaGeralCalculada = Math.round(somaNiveis / totalConceitos);
+            document.getElementById('global-progress-bar').style.width = `${mediaGeralCalculada}%`;
+            document.getElementById('global-progress-desc').textContent = `Você dominou ${mediaGeralCalculada}% da trilha de aprendizado SQL (${concluidosCount} de ${totalConceitos} módulos concluidos)`;
+            document.getElementById('user-xp-label').textContent = `${concluidosCount * 400} XP`;
+
+        } catch (error) {
+            console.error("Erro na renderização adaptativa do HUD:", error);
+            document.getElementById('global-progress-desc').textContent = "Falha crítica ao sincronizar os nós com o banco SQLite.";
+        }
+    }
+
+    // Gatilhos de navegação para os laboratórios/teoria do curso
+    function iniciarModulo(conceitoId, tipo) {
+        if (tipo === 'teoria') {
+            // Botão azul/branco -> leva para a central de lições objetivas que estruturamos
+            window.location.href = `licao.html?conceito=${conceitoId}`;
+        } else if (tipo === 'lab') {
+            // Botão verde -> estrutura futura do laboratório discursivo
+            window.location.href = `laboratorio.html?conceito=${conceitoId}`;
+        }
+    }
+
+    // Ação de Desconexão (Limpa sessão)
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+    });
+</script>
+</body>
+</html>

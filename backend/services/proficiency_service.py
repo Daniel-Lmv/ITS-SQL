@@ -247,38 +247,3 @@ class ProficiencyService:
             "nome": row["nome"],
             "nivel": row["nivel"]
         }
-
-
-if __name__ == "__main__":
-
-    diagnostic_result = {
-
-        1: 66.67,
-        2: 100.0,
-        3: 33.33,
-        4: 66.67,
-        5: 100.0,
-        6: 33.33,
-        7: 66.67,
-        8: 100.0
-
-    }
-
-    user_id = 0
-
-    ProficiencyService.save_initial_proficiency(
-        user_id,
-        diagnostic_result
-    )
-
-    print(
-        ProficiencyService.get_user_proficiency_with_names(
-            user_id
-        )
-    )
-
-    print(
-        ProficiencyService.get_weakest_concept(
-            user_id
-        )
-    )

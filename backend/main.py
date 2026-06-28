@@ -9,7 +9,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth_routes, diagnostic_routes, tutor_routes
+from routes import auth_routes, diagnostic_routes, tutor_routes, laboratorio_routes
 
 app = FastAPI(
     title="ITS-SQL API",
@@ -30,6 +30,7 @@ app.add_middleware(
 app.include_router(auth_routes.router)
 app.include_router(diagnostic_routes.router)
 app.include_router(tutor_routes.router)
+app.include_router(laboratorio_routes.router)
 
 @app.get("/")
 def raiz():
